@@ -23,4 +23,6 @@ The Merger Application is designed to streamline the process of merging data and
 Contributions are welcome! Please refer to the [Change Log](./ChangeLog.md) for recent updates before submitting a pull request.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. 
+
+You are free to use, modify, and distribute this software, provided that proper attribution is given to the original authors. For more details, refer to the [LICENSE](./LICENSE.md) file included in the repository.
