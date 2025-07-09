@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger - Enhanced</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔗 Enhanced PDF Merger</h1>
+            
+            <!-- Mode Selection -->
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="simple">Simple Merge</button>
+                <button class="mode-btn" data-mode="advanced">Advanced Merge</button>
+                <button class="mode-btn" data-mode="bulk">Bulk Operations</button>
+            </div>
+            
+            <!-- Simple Mode -->
+            <div id="simple-mode" class="merge-mode active">
+                <div class="upload-area" id="dropZone">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iMTcgOCAxMiAzIDcgOCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIzIiB4Mj0iMTIiIHkyPSIxNSI+PC9saW5lPjwvc3ZnPg==" alt="Upload icon" class="upload-icon">
+                    <p>Drag & Drop PDF files here<br>or<br>Click to select files</p>
+                    <small>Maximum file size: 50MB per file</small>
+                </div>
+                
+                <form id="uploadForm" action="{{ url_for('merge_pdfs') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="fileInput" name="files[]" multiple accept=".pdf" style="display: none;">
+                    <div id="fileList" class="file-list"></div>
+                    <div class="action-buttons">
+                        <button type="button" id="validateBtn" disabled>Validate Files</button>
+                        <button type="submit" id="mergeBtn" disabled>Merge PDFs</button>
+                    </div>
+                </form>
+                
+                <div id="validationResults" class="validation-results" style="display: none;"></div>
+            </div>
+            
+            <!-- Advanced Mode -->
+            <div id="advanced-mode" class="merge-mode">
+                <div class="upload-area" id="advancedDropZone">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iMTcgOCAxMiAzIDcgOCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIzIiB4Mj0iMTIiIHkyPSIxNSI+PC9saW5lPjwvc3ZnPg==" alt="Upload icon" class="upload-icon">
+                    <p>Upload PDFs for Advanced Merging<br><small>Supports custom ordering and page ranges</small></p>
+                </div>
+                
+                <form id="advancedForm" action="{{ url_for('merge_multiple_pdfs') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="advancedFileInput" name="files[]" multiple accept=".pdf" style="display: none;">
+                    <input type="hidden" id="mergeOptions" name="options" value="{}">
+                    
+                    <div id="advancedFileList" class="advanced-file-list"></div>
+                    
+                    <div class="merge-options" id="mergeOptionsPanel" style="display: none;">
+                        <h3>📋 Merge Options</h3>
+                        <div class="option-group">
+                            <label>
+                                <input type="checkbox" id="customOrder"> Custom File Order
+                            </label>
+                            <label>
+                                <input type="checkbox" id="pageRanges"> Specific Page Ranges
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" id="previewBtn" disabled>Preview Merge</button>
+                        <button type="submit" id="advancedMergeBtn" disabled>Advanced Merge</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Bulk Mode -->
+            <div id="bulk-mode" class="merge-mode">
+                <div class="bulk-info">
+                    <h3>🗂️ Bulk Operations</h3>
+                    <p>Create multiple merged PDFs from different file groups</p>
+                </div>
+                
+                <div id="bulkGroups" class="bulk-groups">
+                    <div class="bulk-group" data-group="0">
+                        <h4>Group 1</h4>
+                        <div class="group-upload-area">
+                            <input type="file" class="bulk-file-input" multiple accept=".pdf">
+                            <p>Select PDFs for Group 1</p>
+                        </div>
+                        <div class="group-file-list"></div>
+                    </div>
+                </div>
+                
+                <div class="bulk-actions">
+                    <button type="button" id="addGroupBtn">➕ Add Group</button>
+                    <button type="button" id="bulkMergeBtn" disabled>Process All Groups</button>
+                </div>
+            </div>
+            
+            <!-- Progress Modal -->
+            <div id="progressModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h3>Processing...</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Preparing files...</p>
+                </div>
+            </div>
+            
+            <!-- Status Messages -->
+            <div id="statusMessages" class="status-messages"></div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
